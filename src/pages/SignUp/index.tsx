@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useCallback, useRef } from 'react';
 import { FiArrowLeft, FiUser, FiMail, FiLock } from 'react-icons/fi';
+import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
+import * as Yup from 'yup';
 
 import logoImg from '../../assets/logo.svg';
 
@@ -9,10 +11,31 @@ import Button from '../../components/Button';
 
 import { Container, Content, Background } from './styles';
 
-const SignIn: React.FC = () => {
-  function handleSubmit(data: object): void {
-    console.log(data);
-  }
+const SignUp: React.FC = () => {
+  const formRef = useRef<FormHandles>(null);
+
+  const handleSubmit = useCallback(async (data: object) => {
+    try {
+      const schema = Yup.object().shape({
+        name: Yup.string().required('Nome obrigatório'),
+        email: Yup.string()
+          .required('E-mail obrigatório')
+          .email('Digite um email válido'),
+        password: Yup.string()
+          .min(6, 'No mínimo 6 digitos')
+          .required('Senha obrigatória'),
+      });
+
+      await schema.validate(data, {
+        abortEarly: false,
+      });
+    } catch (err) {
+      formRef.current?.setErrors({
+        name: 'Nome obrigatório',
+      });
+      console.log(err);
+    }
+  }, []);
 
   return (
     <Container>
@@ -21,7 +44,7 @@ const SignIn: React.FC = () => {
       <Content>
         <img src={logoImg} alt="log" width="200" />
 
-        <Form initialData={{ name: 'diego' }} onSubmit={handleSubmit}>
+        <Form ref={formRef} onSubmit={handleSubmit}>
           <h1>Faça seu Cadastro</h1>
 
           <Input icon={FiUser} name="user" type="text" placeholder="Nome" />
@@ -38,11 +61,11 @@ const SignIn: React.FC = () => {
 
         <a href="login">
           <FiArrowLeft />
-          Voltar para logon
+          Voltar para log on
         </a>
       </Content>
     </Container>
   );
 };
 
-export default SignIn;
+export default SignUp;
