@@ -1,2 +1,2 @@
-## Aplicativo GoBarber para agendamento em Barbaerias,feito com React Native e vá
-rias outras bibliotecas.
+## Aplicativo GoBarber 
+### Com funcionalidades de agendamento em Barbaerias,feito com React Native e várias outras bibliotecas.
