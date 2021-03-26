@@ -28,13 +28,15 @@ export const Container = styled(animated.div)<ContainerProps>`
   border-radius: 10px;
   box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
   display: flex;
+
   & + div {
     margin-top: 8px;
   }
-  ${(props) => toastTypeVariations[props.type || 'info']}
-  > svg {
+
+  ${(props) => toastTypeVariations[props.type || 'info']} > svg {
     margin: 4px 12px 0 0;
   }
+
   div {
     flex: 1;
     p {
@@ -44,6 +46,7 @@ export const Container = styled(animated.div)<ContainerProps>`
       line-height: 20px;
     }
   }
+
   button {
     position: absolute;
     right: 16px;
@@ -53,6 +56,7 @@ export const Container = styled(animated.div)<ContainerProps>`
     background: transparent;
     color: inherit;
   }
+
   ${(props) =>
     !props.hasDescription &&
     css`
