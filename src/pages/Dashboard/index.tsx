@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import DayPicker from 'react-day-picker';
+import 'react-day-picker/lib/style.css';
+
 import { FiPower, FiClock } from 'react-icons/fi';
 import {
   Container,
@@ -22,6 +25,8 @@ const Dashboard: React.FC = () => {
 
   const { signOut, user } = useAuth();
 
+  const defaultAvatar = `https://avatars.dicebear.com/api/male/${user.name}.svg`;
+
   return (
     <Container>
       <Header>
@@ -29,7 +34,7 @@ const Dashboard: React.FC = () => {
           <img src={logoImg} alt="logo" />
 
           <Profile>
-            <img src={user.avatar_url} alt="profile" />
+            <img src={user.avatar_url ?? defaultAvatar} alt="profile" />
 
             <div>
               <span>Bem vindo,</span>
@@ -48,7 +53,7 @@ const Dashboard: React.FC = () => {
           <h1>Horários agendados</h1>
 
           <p>
-            <span>Hohe</span>
+            <span>Hoje</span>
             <span>Dia 06</span>
             <span>Segunda-feira</span>
           </p>
@@ -56,7 +61,7 @@ const Dashboard: React.FC = () => {
           <NextAppointment>
             <strong>Atendimento a seguir</strong>
             <div>
-              <img src="https://ui-avatars.com/api/?name=igor" alt="" />
+              <img src={user.avatar_url ?? defaultAvatar} alt="" />
 
               <strong>Diego fernandes</strong>
               <span>
@@ -118,7 +123,9 @@ const Dashboard: React.FC = () => {
             </Appointment>
           </Section>
         </Schedule>
-        <Calendar />
+        <Calendar>
+          <DayPicker />
+        </Calendar>
       </Content>
     </Container>
   );
