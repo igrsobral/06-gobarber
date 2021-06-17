@@ -1,9 +1,9 @@
-import React, { useCallback, useRef } from 'react';
-import { FiUser, FiMail, FiLock } from 'react-icons/fi';
+import React, { useCallback, useRef, ChangeEvent } from 'react';
+import { FiUser, FiMail, FiLock, FiCamera, FiArrowLeft } from 'react-icons/fi';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 
 import api from '../../services/api';
 
@@ -14,7 +14,8 @@ import getValidationErrors from '../../utils/getValidationErrors';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 
-import { Container, Content } from './styles';
+import { Container, Content, AvatarInput } from './styles';
+import { useAuth } from '../../hooks/auth';
 
 interface ProfileData {
   name: string;
@@ -26,6 +27,28 @@ const Profile: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
   const history = useHistory();
+
+  const { user } = useAuth();
+
+  const handleAvatarChange = useCallback(
+    async (e: ChangeEvent<HTMLInputElement>) => {
+      if (e.target.files) {
+        const data = new FormData();
+
+        data.append('avatar', e.target.files[0]);
+
+        const response = await api.patch('/users/avatar', data);
+
+        if (response) {
+          addToast({
+            type: 'success',
+            title: 'Avatar atualizado!',
+          });
+        }
+      }
+    },
+    [addToast],
+  );
 
   const handleSubmit = useCallback(
     async (data: ProfileData) => {
@@ -72,21 +95,49 @@ const Profile: React.FC = () => {
     [addToast, history],
   );
 
+  console.log(user);
+
   return (
     <Container>
-      <Content>
-        <Form ref={formRef} onSubmit={handleSubmit}>
-          <h1>Faça seu Cadastro</h1>
+      <header>
+        <div>
+          <Link to="/">
+            <FiArrowLeft />
+          </Link>
+        </div>
+      </header>
 
+      <Content>
+        <Form
+          ref={formRef}
+          initialData={{
+            name: user.name,
+            email: user.email,
+          }}
+          onSubmit={handleSubmit}
+        >
+          <AvatarInput>
+            <img src={user.avatar_url} alt={user.name} />
+            <label htmlFor="avatar">
+              <FiCamera />
+              <input type="file" id="avatar" onChange={handleAvatarChange} />
+            </label>
+          </AvatarInput>
+          <h1>Meu perfil</h1>
           <Input icon={FiUser} name="name" type="text" placeholder="Nome" />
           <Input icon={FiMail} name="email" type="text" placeholder="E-mail" />
+          <Input
+            name="old_password"
+            icon={FiLock}
+            type="password"
+            placeholder="Senha atual"
+          />
           <Input
             name="password"
             icon={FiLock}
             type="password"
-            placeholder="senha"
+            placeholder="Nova Senha"
           />
-
           <Button type="submit">Confirmar mudanças</Button>
         </Form>
       </Content>
